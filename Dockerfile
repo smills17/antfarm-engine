@@ -14,8 +14,8 @@ RUN   if [ -f yarn.lock ]; then yarn --frozen-lockfile;   elif [ -f package-lock
 
 # Rebuild the source code only when needed
 FROM base AS builder
-WORKDIR /app
-COPY --from=deps /app/node_modules ./node_modules
+WORKDIR /my-app
+COPY --from=deps /my-app/node_modules ./node_modules
 COPY . .
 
 RUN mkdir -p public
@@ -29,7 +29,7 @@ RUN   if [ -f yarn.lock ]; then yarn run build;   elif [ -f package-lock.json ];
 
 # Production image, copy all the files and run next
 FROM base AS runner
-WORKDIR /app
+WORKDIR /my-app
 
 ENV NODE_ENV production
 # Uncomment the following line in case you want to disable telemetry during runtime.
@@ -40,9 +40,9 @@ RUN adduser --system --uid 1001 nextjs
 
 # Automatically leverage output traces to reduce image size
 # https://nextjs.org/docs/advanced-features/output-file-tracing
-COPY --from=builder --chown=nextjs:nodejs /app/public ./public
-COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+COPY --from=builder --chown=nextjs:nodejs /my-app/public ./public
+COPY --from=builder --chown=nextjs:nodejs /my-app/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /my-app/.next/static ./.next/static
 
 # Set the correct permission for prerender cache
 RUN mkdir -p .next/cache
