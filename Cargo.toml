@@ -1,0 +1,9 @@
+[package]
+name = "antfarm-engine"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+message-io = "0.18"
+tungstenite = { version = ">=0.20.1", optional = false }
+url = { version = "2.2", optional = false }
