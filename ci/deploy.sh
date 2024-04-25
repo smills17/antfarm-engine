@@ -10,10 +10,7 @@ cert=/etc/ssl/certs/ca-certificates.crt
 main() {
   setCluster
 
-  # create image repo secret
-  kubectl create secret docker-registry regcred --docker-server=ghcr.io --docker-username=mwickman --docker-password="$GHCR_TOKEN" --docker-email=mattw@section.io || true
-
-  envsubst '$IMAGE_NAME,$HASURA_ADMIN_SECRET,$SECTION_ADMIN_TOKEN' < ../k8s/deploy.yaml | kubectl apply -f -
+  envsubst '$IMAGE_NAME' < ../k8s/deploy.yaml | kubectl apply -f -
   kubectl apply -f ../k8s/ingress-upstream.yaml
 
   kubectl rollout restart deployment section-project-deployment
