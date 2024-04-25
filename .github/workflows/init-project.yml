@@ -50,6 +50,7 @@
             env:
               SECTION_K8S_API_URL: '${{ secrets.SECTION_K8S_API_URL }}'
               SECTION_API_TOKEN: '${{ secrets.SECTION_API_TOKEN }}'
+              GHCR_TOKEN: '${{ secrets.GHCR_TOKEN }}' 
               DEBUG: 1
             run: |
               ./ci/deploy.sh main
