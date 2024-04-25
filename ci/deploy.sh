@@ -10,7 +10,7 @@ cert=/etc/ssl/certs/ca-certificates.crt
 main() {
   setCluster
 
-  envsubst '$IMAGE_NAME' < ../k8s/deploy.yaml | kubectl apply -f - --validate=false
+  envsubst '$IMAGE_NAME' < ../k8s/deploy.yaml | kubectl apply -f -
   kubectl apply -f ../k8s/ingress-upstream.yaml
 
   kubectl rollout restart deployment section-project-deployment
