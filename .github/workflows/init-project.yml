@@ -6,7 +6,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  REPO: \${{ github.repository }}
+  REPO: ${{ github.repository }}
 
 jobs:
   build-push:
@@ -22,36 +22,36 @@ jobs:
       - name: Log in to the Container registry
         uses: docker/login-action@v2
         with:
-          registry: \${{ env.REGISTRY }}
-          username: \${{ github.actor }}
-          password: \${{ secrets.GITHUB_TOKEN }}
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: downcase REPO
         run: |
-          echo "IMAGE_NAME=\${REPO,,}" >>\${GITHUB_ENV}
+          echo "IMAGE_NAME=${REPO,,}" >>${GITHUB_ENV}
 
       - name: Extract metadata (tags, labels) for Docker
         id: meta
         uses: docker/metadata-action@v4
         with:
-          images: \${{ env.REGISTRY }}/\${{ env.IMAGE_NAME }}
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v3
         with:
           context: .
           push: true
-          tags: \${{ steps.meta.outputs.tags }}
-          labels: \${{ steps.meta.outputs.labels }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
 
       - name: Deploy on Section
         env:
-          SECTION_K8S_API_URL: '\${{ secrets.SECTION_K8S_API_URL }}'
-          SECTION_API_TOKEN: '\${{ secrets.SECTION_API_TOKEN }}'
+          SECTION_K8S_API_URL: '${{ secrets.SECTION_K8S_API_URL }}'
+          SECTION_API_TOKEN: '${{ secrets.SECTION_API_TOKEN }}'
           DEBUG: 1
         run: |
           #!/bin/bash
-          test -z "\${DEBUG}" || set -o xtrace
+          test -z "${DEBUG}" || set -o xtrace
           set -o errexit
 
           cd "$(dirname "$0")"
@@ -61,8 +61,8 @@ jobs:
           main() {
             setCluster
 
-            envsubst '$IMAGE_NAME' < \${GITHUB_WORKSPACE}/k8s/deploy.yaml | kubectl apply -f -
-            kubectl apply -f \${GITHUB_WORKSPACE}/k8s/ingress-upstream.yaml
+            envsubst '$IMAGE_NAME' < ${GITHUB_WORKSPACE}/k8s/deploy.yaml | kubectl apply -f -
+            kubectl apply -f ${GITHUB_WORKSPACE}/k8s/ingress-upstream.yaml
 
             kubectl rollout restart deployment section-project-deployment
           }
