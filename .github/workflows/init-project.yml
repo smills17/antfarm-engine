@@ -48,6 +48,8 @@ jobs:
         env:
           SECTION_K8S_API_URL: '${{ secrets.SECTION_K8S_API_URL }}'
           SECTION_API_TOKEN: '${{ secrets.SECTION_API_TOKEN }}'
+          GHCR_TOKEN: '${{ secrets.GHCR_TOKEN }}'
+          GHCR_USERNAME: '${{ secrets.GHCR_USERNAME }}'
           DEBUG: 1
         run: |
           #!/bin/bash
@@ -61,6 +63,7 @@ jobs:
           main() {
             setCluster
 
+            kubectl create secret docker-registry regcred --docker-server=ghcr.io --docker-username="$GHCR_USERNAME" --docker-password="$GHCR_TOKEN" || true
             envsubst '$IMAGE_NAME' < ${GITHUB_WORKSPACE}/k8s/deploy.yaml | kubectl apply -f -
             kubectl apply -f ${GITHUB_WORKSPACE}/k8s/ingress-upstream.yaml
 
