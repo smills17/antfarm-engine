@@ -8,10 +8,11 @@ ENV PATH /app/node_modules/.bin:$PATH
 # install app dependencies
 COPY package.json yarn.lock* package-lock.json* ./
 
-RUN yarn
+RUN yarn install
 
 # add app to container and attempt build
 COPY . ./
 RUN yarn build || true
 
+# the start command needs to be triple curly braces to avoid escaping special characters
 CMD ["yarn", "start"]
